@@ -1,0 +1,29 @@
+.app-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.68);
+}
+
+.app-dialog {
+  width: min(100%, 480px);
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  border-radius: 14px;
+  background: var(--bs-body-bg, #fff);
+  color: var(--bs-body-color, #172033);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+}
+
+.app-dialog-body { padding: 1.5rem 1.5rem 1rem; }
+.app-dialog-body h2 { margin: 0 0 .75rem; font-size: 1.3rem; }
+.app-dialog-body p { margin: 0; color: var(--bs-secondary-color, #475569); white-space: pre-line; }
+.app-dialog-actions { display: flex; justify-content: flex-end; gap: .75rem; padding: 1rem 1.5rem 1.5rem; }
+
+@media (max-width: 480px) {
+  .app-dialog-actions { flex-direction: column-reverse; }
+  .app-dialog-actions .btn { width: 100%; }
+}

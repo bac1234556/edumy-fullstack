@@ -1,0 +1,71 @@
+.certificate-page {
+  min-height: 80vh;
+}
+
+.certificate-wrapper {
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 4px;
+}
+
+.certificate-border {
+  border: 15px solid #2c3e50;
+  padding: 40px;
+  position: relative;
+  background: #fdfdfd;
+}
+
+.certificate-border::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  border: 2px solid #e67e22;
+}
+
+.certificate-title {
+  font-family: 'Georgia', serif;
+  font-size: 3.5rem;
+  letter-spacing: 5px;
+  color: #2c3e50;
+}
+
+.certificate-subtitle {
+  font-family: 'Arial', sans-serif;
+  letter-spacing: 3px;
+  color: #7f8c8d;
+}
+
+.student-name {
+  font-family: 'Georgia', serif;
+  font-size: 3rem;
+  font-style: italic;
+  color: #2980b9;
+}
+
+.course-name {
+  font-family: 'Arial', sans-serif;
+  font-size: 2rem;
+  color: #2c3e50;
+  font-weight: bold;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .certificate-wrapper, .certificate-wrapper * {
+    visibility: visible;
+  }
+  .certificate-wrapper {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-shadow: none !important;
+  }
+}

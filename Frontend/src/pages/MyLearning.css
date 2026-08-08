@@ -1,0 +1,150 @@
+.my-learning-header {
+  background: #1c1d1f;
+  color: white;
+  padding: 3rem 0 0 0;
+}
+
+.my-learning-header h1 {
+  color: #ffffff;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.enrolled-card .card-title a { color:inherit; text-decoration:none; }
+.enrolled-card .card-title a:hover { color:var(--primary-color); }
+.progress-container { background:#e9ecef; border-radius:4px; height:6px; overflow:hidden; }
+.progress-container .progress-bar { background:var(--primary-color); height:100%; }
+.progress-text { display:block; margin-top:8px; color:var(--primary-color); font-size:13px; font-weight:700; }
+.learning-card-actions { display:flex; gap:10px; margin-top:14px; }
+.learning-card-actions .btn { flex:1; }
+
+.learning-tabs {
+  display: flex;
+  gap: 2rem;
+}
+
+.learning-tabs .tab {
+  padding-bottom: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: #d1d7dc;
+  cursor: pointer;
+  border-bottom: 4px solid transparent;
+}
+
+.learning-tabs .tab.active {
+  color: white;
+  border-bottom-color: white;
+}
+
+.learning-tabs .tab:hover {
+  color: white;
+}
+
+.empty-learning {
+  text-align: center;
+  padding: 5rem 0;
+}
+
+.enrolled-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  padding-top: 2rem;
+}
+
+.enrolled-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.enrolled-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: white;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-img-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+}
+
+.card-img-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.play-overlay-small {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.6);
+  color: white;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  font-size: 20px;
+}
+
+.enrolled-card:hover .play-overlay-small {
+  opacity: 1;
+}
+
+.card-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+  color: #1e293b;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.instructor-name {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: auto;
+}
+
+.progress-container {
+  height: 4px;
+  background: #e2e8f0;
+  margin: 1rem 0 0.5rem 0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #5b21b6;
+}
+
+.progress-text {
+  font-size: 0.75rem;
+  color: #64748b;
+  text-align: right;
+}

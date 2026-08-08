@@ -1,0 +1,33 @@
+{
+  "version": "1.0.0",
+  "mappings": [
+    {
+      "modelItemId": "AAA",
+      "courseId": 1
+    },
+    {
+      "modelItemId": "BBB",
+      "courseId": 2
+    },
+    {
+      "modelItemId": "CCC",
+      "courseId": 3
+    },
+    {
+      "modelItemId": "DDD",
+      "courseId": 4
+    },
+    {
+      "modelItemId": "EEE",
+      "courseId": 5
+    },
+    {
+      "modelItemId": "FFF",
+      "courseId": 6
+    },
+    {
+      "modelItemId": "GGG",
+      "courseId": 7
+    }
+  ]
+}

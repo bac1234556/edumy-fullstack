@@ -1,0 +1,139 @@
+.cart-page {
+  padding: 3rem 0;
+  min-height: 60vh;
+}
+
+.cart-page h1 {
+  font-size: 2rem;
+  color: #1e293b;
+  margin-bottom: 2rem;
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.empty-cart p {
+  font-size: 1.125rem;
+  color: #475569;
+  margin-bottom: 1.5rem;
+}
+
+.cart-content {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.cart-items {
+  flex: 3;
+}
+
+.cart-items h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: #334155;
+}
+
+.cart-item {
+  display: flex;
+  padding: 1.5rem 0;
+  border-top: 1px solid #e2e8f0;
+  gap: 1.5rem;
+}
+
+.cart-item-img {
+  width: 150px;
+  height: 85px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.cart-item-info {
+  flex: 1;
+}
+
+.cart-item-info h4 {
+  margin: 0 0 0.5rem 0;
+}
+
+.cart-item-info h4 a {
+  color: #0f172a;
+  text-decoration: none;
+}
+
+.cart-item-info h4 a:hover {
+  color: var(--primary);
+}
+
+.cart-item-info .instructor {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.remove-btn:hover {
+  text-decoration: underline;
+}
+
+.cart-item-price {
+  text-align: right;
+  min-width: 100px;
+}
+
+.cart-item-price .price {
+  font-weight: bold;
+  color: #a435f0; /* Udemy price color */
+  font-size: 1.125rem;
+}
+
+.cart-summary {
+  flex: 1;
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.cart-summary h3 {
+  font-size: 1.125rem;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.total-price {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+}
+
+.checkout-btn {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.125rem;
+}
+
+@media (max-width: 768px) {
+  .cart-content {
+    flex-direction: column;
+  }
+  .cart-summary {
+    width: 100%;
+    order: -1;
+    margin-bottom: 2rem;
+  }
+}
