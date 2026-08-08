@@ -263,40 +263,6 @@ namespace EduMy.Backend.Services
                 throw new InvalidOperationException("Failed to save uploaded file.");
             }
 
-            var isImage = file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase) ||
-                          new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".bmp" }.Contains(ext);
-
-            string resourceType;
-            if (file.ContentType.StartsWith("video/", StringComparison.OrdinalIgnoreCase) ||
-                new[] { ".mp4", ".webm", ".ogg", ".mov", ".m4v" }.Contains(ext))
-            {
-                resourceType = "Video";
-            }
-            else if (isImage)
-            {
-                resourceType = "Image";
-            }
-            else if (file.ContentType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase) || ext == ".pdf")
-            {
-                resourceType = "Pdf";
-            }
-            else if (new[] { ".ppt", ".pptx" }.Contains(ext) ||
-                     file.ContentType.Contains("presentation") || file.ContentType.Contains("powerpoint") ||
-                     file.ContentType.Equals("application/vnd.ms-powerpoint", StringComparison.OrdinalIgnoreCase) ||
-                     file.ContentType.Equals("application/vnd.openxmlformats-officedocument.presentationml.presentation", StringComparison.OrdinalIgnoreCase))
-            {
-                resourceType = "PowerPoint";
-            }
-            else if (new[] { ".doc", ".docx", ".xls", ".xlsx", ".txt", ".csv", ".odt", ".ods", ".odp" }.Contains(ext) ||
-                     file.ContentType.Contains("officedocument") || file.ContentType.Contains("word") || file.ContentType.Contains("excel") || file.ContentType.StartsWith("text/"))
-            {
-                resourceType = "Document";
-            }
-            else
-            {
-                resourceType = "File";
-            }
-
             return new LessonResourceUploadResult(
                 Url: $"/uploads/{safeFilename}",
                 OriginalFileName: Path.GetFileName(file.FileName),
