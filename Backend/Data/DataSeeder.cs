@@ -235,6 +235,7 @@ public static class DataSeeder
 
     private static void EnsureCourseSectionsAndLessons(ApplicationDbContext db, IReadOnlyList<Course> courses)
     {
+        if (db.CourseSections.Any()) return;
         for (var courseIndex = 0; courseIndex < courses.Count; courseIndex++)
         {
             var course = courses[courseIndex];
@@ -288,6 +289,7 @@ public static class DataSeeder
 
     private static void EnsureEnrollments(ApplicationDbContext db, IReadOnlyList<User> students, IReadOnlyList<Course> courses)
     {
+        if (db.Enrollments.Any()) return;
         var published = courses.Where(c => c.Status == "Published" && c.Slug != "seed-empty-curriculum").ToList();
         foreach (var course in published)
         {
@@ -330,6 +332,7 @@ public static class DataSeeder
 
     private static void EnsureOrders(ApplicationDbContext db, IReadOnlyList<User> students)
     {
+        if (db.Orders.Any()) return;
         foreach (var student in students)
         {
             var enrolledIds = db.Enrollments.Where(e => e.UserId == student.UserId).Select(e => e.CourseId).ToList();
@@ -351,6 +354,7 @@ public static class DataSeeder
 
     private static void EnsureReviews(ApplicationDbContext db, User admin, IReadOnlyList<User> students)
     {
+        if (db.Reviews.Any()) return;
         var comments = new[]
         {
             "Nội dung rõ ràng và các ví dụ rất sát với công việc thực tế.",
@@ -435,6 +439,7 @@ public static class DataSeeder
 
     private static void EnsureLessonProgress(ApplicationDbContext db)
     {
+        if (db.LessonProgresses.Any()) return;
         var seededEnrollments = db.Enrollments.Where(e => e.User!.Email.StartsWith("seedstudent"))
             .OrderBy(e => e.EnrollmentId).ToList();
         foreach (var enrollment in seededEnrollments)
@@ -456,6 +461,7 @@ public static class DataSeeder
 
     private static void EnsureDiscussions(ApplicationDbContext db, IReadOnlyList<User> students)
     {
+        if (db.Discussions.Any()) return;
         var courses = db.Courses.Where(c => c.Status == "Published").OrderBy(c => c.CourseId).ToList();
         foreach (var course in courses)
         {
@@ -511,6 +517,7 @@ public static class DataSeeder
 
     private static void RecalculateAggregates(ApplicationDbContext db)
     {
+        if (db.Enrollments.Any(e => e.TotalLessons > 0)) return; // Skip if already calculated
         foreach (var enrollment in db.Enrollments.ToList())
         {
             var total = db.Lessons.Count(l => l.Section!.CourseId == enrollment.CourseId && !l.IsDraft);
