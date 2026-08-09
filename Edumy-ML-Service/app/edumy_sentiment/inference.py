@@ -13,14 +13,15 @@ _model = None
 _classes = None
 _metadata = None
 
-def _load_artifacts():
+def _load_artifacts(artifacts_dir=None):
     global _model, _classes, _metadata
     if _model is not None:
         return
         
-    # Assuming task2_sentiment/src/edumy_sentiment/inference.py
-    # So artifacts_dir is at task2_sentiment/artifacts/sentiment
-    artifacts_dir = Path(__file__).parent.parent.parent / "artifacts" / "sentiment"
+    if artifacts_dir is None:
+        artifacts_dir = Path(__file__).parent.parent.parent / "artifacts" / "sentiment"
+    else:
+        artifacts_dir = Path(artifacts_dir)
     
     if not (artifacts_dir / "best_model.joblib").exists():
         raise FileNotFoundError(f"Model artifact not found at {artifacts_dir}")
@@ -33,12 +34,13 @@ def _load_artifacts():
     with open(artifacts_dir / "metadata.json", "r", encoding="utf-8") as f:
         _metadata = json.load(f)
 
-def predict_sentiment(comment_text: str, top_k: int = 3) -> dict:
+def predict_sentiment(comment_text: str, top_k: int = 3, artifacts_dir=None) -> dict:
     """Predict sentiment for a given student comment.
     
     Args:
         comment_text: The raw comment text.
         top_k: Number of top classes to return (capped at 3).
+        artifacts_dir: Optional path to artifacts directory.
         
     Returns:
         Dictionary with sentiment prediction and scores.
@@ -49,7 +51,7 @@ def predict_sentiment(comment_text: str, top_k: int = 3) -> dict:
     if not comment_text or not str(comment_text).strip():
         raise ValueError("comment_text cannot be empty or whitespace-only")
         
-    _load_artifacts()
+    _load_artifacts(artifacts_dir)
     
     X = [comment_text]
     

@@ -68,7 +68,7 @@ class RecommendationService:
                 self.similar_pipeline = joblib.load(model_path)
                 self.catalog_df = pd.read_parquet(catalog_path)
                 with open(index_path, "r") as f:
-                    self.course_index = {int(k): int(v) for k, v in json.load(f).items()}
+                    self.course_index = {str(k): int(v) for k, v in json.load(f).items()}
                 
                 # Precompute catalog vectors
                 self.X_catalog = self.similar_pipeline.transform(self.catalog_df['text_feature'])
@@ -128,11 +128,11 @@ class RecommendationService:
         if not self.similar_loaded or self.catalog_df is None:
             raise RuntimeError("Similar courses index is not loaded.")
             
-        if course_id not in self.course_index:
+        if str(course_id) not in self.course_index:
             # Seed course is not in index. Return empty list as we can't recommend.
             return []
             
-        idx = self.course_index[course_id]
+        idx = self.course_index[str(course_id)]
         query_vector = self.X_catalog[idx]
         
         # Compute cosine similarities
@@ -157,8 +157,8 @@ class RecommendationService:
     def get_bundle_recommendations(self, course_id: int, user_id: int = None, k: int = 3):
         # 1. Try Collaborative filtering
         if self.bundle_loaded and self.bundle_model and hasattr(self.bundle_model, "item_to_idx"):
-            if course_id in self.bundle_model.item_to_idx:
-                recs = self.bundle_model.predict([course_id], top_k=k)
+            if str(course_id) in self.bundle_model.item_to_idx:
+                recs = self.bundle_model.predict([str(course_id)], top_k=k)
                 if recs:
                     return {
                         "source": "collaborative",
