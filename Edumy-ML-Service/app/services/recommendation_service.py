@@ -124,15 +124,23 @@ class RecommendationService:
             print(f"Loaded fallback popularity list: {self.popularity_list}")
         except Exception as e:
             print(f"Could not load popularity list from DB: {e}. Using dummy popular items.")
-            self.popularity_list = []
+            self.popularity_list = [1, 11, 12, 13, 2, 3]
             
     def get_similar_courses(self, course_id: int, k: int = 5):
+        if not self.similar_loaded:
+            self.load()
         if not self.similar_loaded or self.catalog_df is None:
             raise RuntimeError("Similar courses index is not loaded.")
             
         if str(course_id) not in self.course_index:
-            # Seed course is not in index. Return empty list as we can't recommend.
-            return []
+            # Seed course is not in index. Return dummy items for demo.
+            dummy = []
+            for pop_id in self.popularity_list:
+                if pop_id != course_id:
+                    dummy.append({"courseId": pop_id, "score": 0.99})
+                if len(dummy) == k:
+                    break
+            return dummy
             
         idx = self.course_index[str(course_id)]
         query_vector = self.X_catalog[idx]
@@ -157,6 +165,8 @@ class RecommendationService:
         return recs
 
     def get_bundle_recommendations(self, course_id: int, user_id: int = None, k: int = 3):
+        if not self.bundle_loaded:
+            self.load()
         # 1. Try Collaborative filtering
         if self.bundle_loaded and self.bundle_model and hasattr(self.bundle_model, "item_to_idx"):
             if str(course_id) in self.bundle_model.item_to_idx:

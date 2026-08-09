@@ -28,7 +28,9 @@ class CourseClassificationService:
             print(f"Error loading Course Classification artifacts: {e}")
             
     def predict(self, title: str, description: str):
-        if not self.loaded or not self.predictor:
+        if not self.loaded:
+            self.load()
+        if not self.predictor:
             raise RuntimeError("Classification service is not loaded.")
         
         result = self.predictor.predict(title, description, category_top_k=3, topic_top_k=5)

@@ -18,10 +18,7 @@ recommendation_service = RecommendationService()
 
 @app.on_event("startup")
 def startup_event():
-    print("Loading ML models at startup...")
-    classification_service.load()
-    sentiment_service.load()
-    recommendation_service.load()
+    print("Edumy ML Service started (models will be lazy-loaded on demand).")
 
 # --- Request/Response Schemas ---
 

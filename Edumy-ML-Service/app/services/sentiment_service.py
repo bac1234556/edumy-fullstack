@@ -27,7 +27,7 @@ class SentimentService:
             
     def predict(self, comment: str):
         if not self.loaded:
-            raise RuntimeError("Sentiment service is not loaded.")
+            self.load()
         
         result = predict_sentiment(comment, top_k=3, artifacts_dir=self.artifacts_dir)
         return {
