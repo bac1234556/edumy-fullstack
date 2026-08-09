@@ -69,6 +69,8 @@ class RecommendationService:
                 self.catalog_df = pd.read_parquet(catalog_path)
                 with open(index_path, "r") as f:
                     self.course_index = {str(k): int(v) for k, v in json.load(f).items()}
+                # Reconstruct text_feature because it was dropped to save space
+                self.catalog_df['text_feature'] = self.catalog_df['title'].fillna('') + " " + self.catalog_df['description'].fillna('')
                 
                 # Precompute catalog vectors
                 self.X_catalog = self.similar_pipeline.transform(self.catalog_df['text_feature'])
