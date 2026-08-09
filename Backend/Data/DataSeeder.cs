@@ -461,7 +461,7 @@ public static class DataSeeder
 
     private static void EnsureDiscussions(ApplicationDbContext db, IReadOnlyList<User> students)
     {
-        if (db.Discussions.Any()) return;
+        if (db.CourseDiscussionThreads.Any()) return;
         var courses = db.Courses.Where(c => c.Status == "Published").OrderBy(c => c.CourseId).ToList();
         foreach (var course in courses)
         {
