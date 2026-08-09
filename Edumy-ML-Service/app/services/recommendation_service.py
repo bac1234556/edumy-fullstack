@@ -97,7 +97,23 @@ class RecommendationService:
             
         # 3. Retrieve global popularity from DB for fallback
         try:
-            conn = psycopg2.connect("host=localhost dbname=EduMyDb user=postgres password=postgres")
+            db_url = os.environ.get("DATABASE_URL", "host=localhost dbname=EduMyDb user=postgres password=postgres")
+            if ";" in db_url:
+                # Convert C# connection string to psycopg2 kwargs
+                parts = db_url.split(";")
+                kwargs = {}
+                for part in parts:
+                    if "=" in part:
+                        k, v = part.split("=", 1)
+                        k = k.strip().lower()
+                        if k == "host" or k == "server": kwargs["host"] = v.strip()
+                        elif k == "database": kwargs["dbname"] = v.strip()
+                        elif k == "username" or k == "user id": kwargs["user"] = v.strip()
+                        elif k == "password": kwargs["password"] = v.strip()
+                        elif k == "port": kwargs["port"] = v.strip()
+                conn = psycopg2.connect(**kwargs)
+            else:
+                conn = psycopg2.connect(db_url)
             cur = conn.cursor()
             cur.execute('SELECT "CourseId", COUNT(*) as cnt FROM "Enrollments" GROUP BY "CourseId" ORDER BY cnt DESC LIMIT 10;')
             self.popularity_list = [int(row[0]) for row in cur.fetchall()]
