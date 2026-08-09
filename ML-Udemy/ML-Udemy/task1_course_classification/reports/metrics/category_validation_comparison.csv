@@ -1,0 +1,4 @@
+model,accuracy,macro_precision,macro_recall,macro_f1,weighted_f1
+LinearSVC,0.7722,0.7748,0.7642,0.7665,0.7691
+LogisticRegression,0.7623,0.7652,0.7609,0.7606,0.7603
+MultinomialNB,0.7401,0.8113,0.6504,0.6695,0.7298

@@ -27,9 +27,19 @@ export default function CourseDetail() {
   const [replyText, setReplyText] = useState({});
   const [courseComment, setCourseComment] = useState('');
   const [confirmUnpublic, setConfirmUnpublic] = useState(false);
+  const [similarCourses, setSimilarCourses] = useState([]);
+  const [bundleCourses, setBundleCourses] = useState(null);
 
   const load = async () => {
-    try { const { data } = await api.get(`/courses/${id}`); setCourse(data); setError(''); }
+    try {
+      const { data } = await api.get(`/courses/${id}`);
+      setCourse(data);
+      setError('');
+      
+      // Fetch recommendations
+      api.get(`/courses/${id}/similar`).then(res => setSimilarCourses(res.data)).catch(() => {});
+      api.get(`/courses/${id}/bundle`).then(res => setBundleCourses(res.data)).catch(() => {});
+    }
     catch { setError('Không thể tải khóa học này.'); }
     finally { setLoading(false); }
   };
@@ -163,11 +173,77 @@ export default function CourseDetail() {
         </>}
       </section>
 
+      {/* Similar Courses Section */}
+      {similarCourses && similarCourses.length > 0 && (
+        <section className="similar-courses-section mt-5 mb-5 p-4 bg-light rounded">
+          <h2 className="mb-4" style={{ fontWeight: 600 }}>Khóa học tương tự gợi ý bởi AI</h2>
+          <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+            {similarCourses.map(c => (
+              <div className="col" key={c.courseId}>
+                <div className="card h-100 shadow-sm border-0 transition-hover">
+                  <Link to={`/courses/${c.courseId}`} className="text-decoration-none text-dark">
+                    <div style={{ height: '140px', overflow: 'hidden' }}>
+                      <CourseThumbnail src={c.thumbnailUrl} alt={c.title} />
+                    </div>
+                    <div className="card-body p-3">
+                      <h3 className="card-title h6 text-truncate mb-1" title={c.title}>{c.title}</h3>
+                      <p className="text-muted small mb-2">{c.instructorName}</p>
+                      <div className="d-flex align-items-center gap-1 mb-2">
+                        <span className="text-warning fw-bold small">{c.averageRating || 0}</span>
+                        <Star size={12} fill="#eb8a2f" color="#eb8a2f"/>
+                      </div>
+                      <div className="fw-bold">{formatCurrencyVN(c.price)}</div>
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Bundle Recommendation Section */}
+      {bundleCourses && bundleCourses.items && bundleCourses.items.length > 0 && (
+        <section className="bundle-courses-section mt-5 mb-5 p-4 bg-light rounded border border-primary border-opacity-25">
+          <div className="d-flex align-items-center gap-2 mb-3">
+            <span className="badge bg-primary">AI Bundle Package</span>
+            <h2 className="h4 mb-0" style={{ fontWeight: 700 }}>Học viên mua khóa học này cũng thường mua</h2>
+          </div>
+          <p className="text-muted small mb-4">Gói combo khóa học đề xuất tự động dựa trên hành vi đăng ký.</p>
+          <div className="row row-cols-1 row-cols-md-3 g-3">
+            {bundleCourses.items.map(c => (
+              <div className="col" key={c.courseId}>
+                <div className="card h-100 shadow-sm border-0">
+                  <Link to={`/courses/${c.courseId}`} className="text-decoration-none text-dark">
+                    <div style={{ height: '100px', overflow: 'hidden' }}>
+                      <CourseThumbnail src={c.thumbnailUrl} alt={c.title} />
+                    </div>
+                    <div className="card-body p-3">
+                      <h3 className="card-title h6 text-truncate mb-1" title={c.title}>{c.title}</h3>
+                      <p className="text-muted small mb-2">{c.instructorName}</p>
+                      <div className="fw-bold">{formatCurrencyVN(c.price)}</div>
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       <section className="course-reviews mt-5" id="reviews"><h2>Feedback & comments</h2>
         <div className="reviews-list mt-4">{(course.reviews || []).length === 0 && (course.comments || []).length === 0 ? <p>Chưa có đánh giá hoặc bình luận.</p> : <>
           {(course.reviews || []).map(review => <article className="review-card mb-4 p-3 border rounded" id={`review-${review.reviewId}`} key={review.reviewId}>
             <div className="d-flex justify-content-between"><Link className="d-flex gap-2 align-items-center fw-bold" to={`/users/${review.userId}`}>{review.user?.avatarUrl && <img src={review.user.avatarUrl} width="32" height="32" className="rounded-circle"/>}{review.user?.fullName || 'Người dùng'}</Link><small>{new Date(review.createdAt).toLocaleDateString('vi-VN')}</small></div>
-            <div className="stars my-2">{'★'.repeat(review.rating)}{'☆'.repeat(5-review.rating)}</div><p>{review.comment}</p>
+            <div className="stars my-2 d-flex align-items-center gap-2">
+              <span>{'★'.repeat(review.rating)}{'☆'.repeat(5-review.rating)}</span>
+              {review.sentimentLabel && (
+                <span className={`badge ${review.sentimentLabel === 'Positive' ? 'bg-success' : review.sentimentLabel === 'Negative' ? 'bg-danger' : 'bg-warning text-dark'}`} style={{fontSize: '11px'}}>
+                  {review.sentimentLabel === 'Positive' ? 'Tích cực' : review.sentimentLabel === 'Negative' ? 'Tiêu cực' : 'Trung lập'}
+                </span>
+              )}
+            </div>
+            <p>{review.comment}</p>
             {(review.replies || []).map(reply => <div className="ms-4 mt-2 p-2 bg-light rounded" id={`reply-${reply.reviewReplyId}`} key={reply.reviewReplyId}><Link to={`/users/${reply.userId}`} className="fw-bold">{reply.user?.fullName}</Link> <span className="badge bg-secondary">{reply.user?.role}</span><p className="mb-0">{reply.content}</p></div>)}
             {canRespond && <div className="d-flex gap-2 mt-3"><input className="form-control" maxLength="2000" placeholder="Phản hồi" value={replyText[review.reviewId] || ''} onChange={e=>setReplyText(v=>({...v,[review.reviewId]:e.target.value}))}/><button className="btn btn-outline-primary" disabled={busy} onClick={()=>submitReply(review.reviewId)}>Gửi</button></div>}
           </article>)}

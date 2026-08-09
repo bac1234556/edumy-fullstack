@@ -1,0 +1,26 @@
+datasets:
+  similar_courses:
+    kaggle_slug: longnguyen3774/coursera-courses-metadata-for-analytics-2025
+    purpose: content-based similar-course recommendation
+    expected_fields:
+      title_candidates: [name, title, course_title]
+      description_candidates: [content, description, course_description, what_you_learn]
+      category_candidates: [category, subject]
+      skills_candidates: [skills, skill, tags]
+    notes:
+      - Inspect actual files/columns before hard-coding.
+      - Category and skills are evaluation annotations only, not model features.
+
+  bundle:
+    kaggle_slug: ddatad/course-enrollments-dataset
+    purpose: implicit co-enrollment / bundle recommendation
+    expected_fields:
+      user_candidates: [user, user_id, learner, learner_id]
+      item_candidates: [item, item_id, course, course_id]
+      rating_candidates: [rating, enrolled, interaction]
+    positive_interaction:
+      rating_equals: 1
+    notes:
+      - Inspect actual files/columns before hard-coding.
+      - Rating 0 is not a positive enrollment.
+      - Do not map these item IDs to Edumy IDs.

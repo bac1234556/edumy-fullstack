@@ -1,0 +1,9 @@
+{
+  "model": "LinearSVC",
+  "accuracy": 0.7882,
+  "macro_precision": 0.7873,
+  "macro_recall": 0.7748,
+  "macro_f1": 0.7778,
+  "weighted_f1": 0.786,
+  "classification_report": "                                precision    recall  f1-score   support\n\n             Arts & Humanities       0.79      0.91      0.85        64\n         Business & Management       0.73      0.78      0.75        82\nComputer Science & Development       0.77      0.62      0.69        94\n             Data Science & AI       0.77      0.80      0.79        99\n                   Engineering       0.86      0.86      0.86       112\n             Health & Wellness       0.86      0.87      0.87       116\n        Information Technology       0.77      0.82      0.79        98\n             Language Learning       0.89      0.92      0.91        26\n                  Math & Logic       0.78      0.70      0.74        10\n          Personal Development       0.76      0.54      0.63        35\n               Social Sciences       0.67      0.71      0.69        76\n\n                      accuracy                           0.79       812\n                     macro avg       0.79      0.77      0.78       812\n                  weighted avg       0.79      0.79      0.79       812\n"
+}

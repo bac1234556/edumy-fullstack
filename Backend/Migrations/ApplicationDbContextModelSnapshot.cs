@@ -240,6 +240,9 @@ namespace EduMy.Backend.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
+                    b.Property<int?>("PrimaryCategoryId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("ReviewCount")
                         .HasColumnType("integer");
 
@@ -272,6 +275,8 @@ namespace EduMy.Backend.Migrations
                     b.HasIndex("InstructorId");
 
                     b.HasIndex("IsDeleted");
+
+                    b.HasIndex("PrimaryCategoryId");
 
                     b.ToTable("Courses");
                 });
@@ -650,6 +655,21 @@ namespace EduMy.Backend.Migrations
                     b.HasIndex("TagId");
 
                     b.ToTable("CourseTags");
+                });
+
+            modelBuilder.Entity("EduMy.Backend.Models.CourseTopic", b =>
+                {
+                    b.Property<int>("CourseId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TopicId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("CourseId", "TopicId");
+
+                    b.HasIndex("TopicId");
+
+                    b.ToTable("CourseTopics");
                 });
 
             modelBuilder.Entity("EduMy.Backend.Models.Enrollment", b =>
@@ -1282,6 +1302,24 @@ namespace EduMy.Backend.Migrations
                     b.ToTable("Tags");
                 });
 
+            modelBuilder.Entity("EduMy.Backend.Models.Topic", b =>
+                {
+                    b.Property<int>("TopicId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TopicId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)");
+
+                    b.HasKey("TopicId");
+
+                    b.ToTable("Topics");
+                });
+
             modelBuilder.Entity("EduMy.Backend.Models.User", b =>
                 {
                     b.Property<int>("UserId")
@@ -1506,9 +1544,16 @@ namespace EduMy.Backend.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("EduMy.Backend.Models.Category", "PrimaryCategory")
+                        .WithMany()
+                        .HasForeignKey("PrimaryCategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("DeletedByUser");
 
                     b.Navigation("Instructor");
+
+                    b.Navigation("PrimaryCategory");
                 });
 
             modelBuilder.Entity("EduMy.Backend.Models.CourseCategory", b =>
@@ -1715,6 +1760,25 @@ namespace EduMy.Backend.Migrations
                     b.Navigation("Course");
 
                     b.Navigation("Tag");
+                });
+
+            modelBuilder.Entity("EduMy.Backend.Models.CourseTopic", b =>
+                {
+                    b.HasOne("EduMy.Backend.Models.Course", "Course")
+                        .WithMany("CourseTopics")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EduMy.Backend.Models.Topic", "Topic")
+                        .WithMany("CourseTopics")
+                        .HasForeignKey("TopicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Topic");
                 });
 
             modelBuilder.Entity("EduMy.Backend.Models.Enrollment", b =>
@@ -2070,6 +2134,8 @@ namespace EduMy.Backend.Migrations
 
                     b.Navigation("CourseTags");
 
+                    b.Navigation("CourseTopics");
+
                     b.Navigation("DiscussionThreads");
 
                     b.Navigation("Enrollments");
@@ -2154,6 +2220,11 @@ namespace EduMy.Backend.Migrations
             modelBuilder.Entity("EduMy.Backend.Models.Tag", b =>
                 {
                     b.Navigation("CourseTags");
+                });
+
+            modelBuilder.Entity("EduMy.Backend.Models.Topic", b =>
+                {
+                    b.Navigation("CourseTopics");
                 });
 
             modelBuilder.Entity("EduMy.Backend.Models.User", b =>

@@ -1,0 +1,16 @@
+{
+  "model": "OvR_SGD_log_loss",
+  "threshold": 0.45,
+  "micro_precision": 0.6569,
+  "micro_recall": 0.7622,
+  "micro_f1": 0.7056,
+  "macro_precision": 0.7162,
+  "macro_recall": 0.7241,
+  "macro_f1": 0.7029,
+  "hamming_loss": 0.032,
+  "subset_accuracy": 0.3035,
+  "precision_at_3": 0.5188,
+  "recall_at_3": 0.8143,
+  "precision_at_5": 0.3638,
+  "recall_at_5": 0.9029
+}

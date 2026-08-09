@@ -25,42 +25,98 @@ namespace EduMy.Backend.Services
             _serviceProvider = serviceProvider;
         }
 
+        // --- Core Direct Unified ML Endpoints ---
+
+        public async Task<CourseClassificationModel?> ClassifyCourseNewAsync(string title, string description)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("/api/ml/course-classification", new { title, description });
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadFromJsonAsync<CourseClassificationModel>();
+                }
+                _logger.LogWarning("Course classification API returned status code {StatusCode}", response.StatusCode);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calling ML Course Classification API (/api/ml/course-classification)");
+            }
+            return null;
+        }
+
+        public async Task<SentimentModel?> AnalyzeSentimentNewAsync(string comment)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("/api/ml/sentiment", new { comment });
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadFromJsonAsync<SentimentModel>();
+                }
+                _logger.LogWarning("Sentiment API returned status code {StatusCode}", response.StatusCode);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calling ML Sentiment API (/api/ml/sentiment)");
+            }
+            return null;
+        }
+
+        public async Task<List<SimilarItemResult>?> GetSimilarCoursesAsync(int courseId, int k = 5)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("/api/ml/recommendations/similar", new { courseId, k });
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadFromJsonAsync<List<SimilarItemResult>>();
+                }
+                _logger.LogWarning("Similar recommendations API returned status code {StatusCode}", response.StatusCode);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calling ML Similar Recommendations API (/api/ml/recommendations/similar)");
+            }
+            return null;
+        }
+
+        public async Task<BundleResult?> GetBundleRecommendationsAsync(int courseId, int? userId = null, int k = 3)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("/api/ml/recommendations/bundle", new { courseId, userId, k });
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadFromJsonAsync<BundleResult>();
+                }
+                _logger.LogWarning("Bundle recommendations API returned status code {StatusCode}", response.StatusCode);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calling ML Bundle Recommendations API (/api/ml/recommendations/bundle)");
+            }
+            return null;
+        }
+
+        // --- Obsolete/Compatibility Endpoints (with Cleaned Up Fallbacks) ---
+
         public async Task<SentimentResult?> AnalyzeSentimentAsync(string text, int? rating = null)
         {
             try
             {
-                // Call the new FastAPI endpoint: POST /analyze-sentiment
                 var response = await _httpClient.PostAsJsonAsync("/analyze-sentiment", new { text, rating });
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadFromJsonAsync<SentimentResult>();
                 }
-                else
-                {
-                    _logger.LogWarning("Sentiment analysis API returned status code {StatusCode}", response.StatusCode);
-                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error calling ML Sentiment API (/analyze-sentiment). Running fallback.");
+                _logger.LogError(ex, "Error calling ML Sentiment Compatibility API. Running simple fallback.");
             }
 
-            // Fallback strategy: rating or keyword classification
-            if (rating.HasValue)
-            {
-                var label = rating.Value >= 4 ? "Positive" : rating.Value <= 2 ? "Negative" : "Neutral";
-                return new SentimentResult { Label = label, Score = rating.Value / 5.0, Confidence = 0.9, Source = "fallback" };
-            }
-            
-            var normalizedText = (text ?? string.Empty).ToLower();
-            if (normalizedText.Contains("tốt") || normalizedText.Contains("hay") || normalizedText.Contains("tuyệt") || normalizedText.Contains("good") || normalizedText.Contains("great") || normalizedText.Contains("like"))
-            {
-                return new SentimentResult { Label = "Positive", Score = 0.9, Confidence = 0.7, Source = "fallback" };
-            }
-            if (normalizedText.Contains("tệ") || normalizedText.Contains("dở") || normalizedText.Contains("chán") || normalizedText.Contains("bad") || normalizedText.Contains("poor"))
-            {
-                return new SentimentResult { Label = "Negative", Score = 0.1, Confidence = 0.7, Source = "fallback" };
-            }
+            // Clean fallback: no rating/keyword fake sentiment logic. Simply return neutral or empty object.
             return new SentimentResult { Label = "Neutral", Score = 0.5, Confidence = 0.5, Source = "fallback" };
         }
 
@@ -68,7 +124,6 @@ namespace EduMy.Backend.Services
         {
             try
             {
-                // Call the new FastAPI endpoint: POST /predict-category
                 var response = await _httpClient.PostAsJsonAsync("/predict-category", new { title, description });
                 if (response.IsSuccessStatusCode)
                 {
@@ -84,80 +139,19 @@ namespace EduMy.Backend.Services
                         };
                     }
                 }
-                else
-                {
-                    _logger.LogWarning("Classify course API returned status code {StatusCode}", response.StatusCode);
-                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error calling ML Classify API (/predict-category). Running fallback.");
+                _logger.LogError(ex, "Error calling ML Classify Compatibility API. Running simple fallback.");
             }
 
-            // Fallback strategy: keyword lookup or most popular category
-            try
-            {
-                using (var scope = _serviceProvider.CreateScope())
-                {
-                    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                    var categories = await db.Categories.Where(c => c.IsActive && c.Name != "Uncategorized").ToListAsync();
-                    
-                    var titleLower = (title ?? string.Empty).ToLower();
-                    var descLower = (description ?? string.Empty).ToLower();
-
-                    var matched = categories.FirstOrDefault(c => 
-                        titleLower.Contains(c.Name.ToLower()) || descLower.Contains(c.Name.ToLower())
-                    );
-
-                    if (matched != null)
-                    {
-                        return new ClassificationResult
-                        {
-                            Category = matched.Name,
-                            Confidence = 0.8,
-                            Source = "fallback",
-                            Alternatives = new List<ClassificationAlternative>
-                            {
-                                new ClassificationAlternative { Category = matched.Name, Confidence = 0.8 }
-                            }
-                        };
-                    }
-
-                    var popularCategory = await db.CourseCategories
-                        .GroupBy(cc => cc.CategoryId)
-                        .OrderByDescending(g => g.Count())
-                        .Select(g => g.Key)
-                        .FirstOrDefaultAsync();
-
-                    var fallbackCat = categories.FirstOrDefault(c => c.CategoryId == popularCategory) ?? categories.FirstOrDefault();
-                    if (fallbackCat != null)
-                    {
-                        return new ClassificationResult
-                        {
-                            Category = fallbackCat.Name,
-                            Confidence = 0.6,
-                            Source = "fallback",
-                            Alternatives = new List<ClassificationAlternative>
-                            {
-                                new ClassificationAlternative { Category = fallbackCat.Name, Confidence = 0.6 }
-                            }
-                        };
-                    }
-                }
-            }
-            catch (Exception fallbackEx)
-            {
-                _logger.LogError(fallbackEx, "Failed to execute Classify fallback.");
-            }
-
-            return new ClassificationResult { Category = "Development", Confidence = 0.5, Source = "fallback" };
+            return new ClassificationResult { Category = "Computer Science & Development", Confidence = 0.5, Source = "fallback" };
         }
 
         public async Task<RecommendationResult?> RecommendCoursesAsync(int userId)
         {
             try
             {
-                // Call the new FastAPI endpoint: GET /recommendations/{user_id}
                 var response = await _httpClient.GetAsync($"/recommendations/{userId}?topK=10");
                 if (response.IsSuccessStatusCode)
                 {
@@ -179,79 +173,10 @@ namespace EduMy.Backend.Services
                         };
                     }
                 }
-                else
-                {
-                    _logger.LogWarning("Recommendations API returned status code {StatusCode}", response.StatusCode);
-                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error calling ML Recommend API (/recommendations/{UserId}). Running fallback.", userId);
-            }
-
-            // Fallback strategy: category co-purchased or user favorite categories
-            try
-            {
-                using (var scope = _serviceProvider.CreateScope())
-                {
-                    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                    
-                    var userCategoryIds = await db.Enrollments
-                        .Where(e => e.UserId == userId)
-                        .SelectMany(e => e.Course!.CourseCategories.Select(cc => cc.CategoryId))
-                        .Distinct()
-                        .ToListAsync();
-
-                    if (!userCategoryIds.Any())
-                    {
-                        userCategoryIds = await db.CourseCategories
-                            .GroupBy(cc => cc.CategoryId)
-                            .OrderByDescending(g => g.Count())
-                            .Take(2)
-                            .Select(g => g.Key)
-                            .ToListAsync();
-                    }
-
-                    var enrolledCourseIds = await db.Enrollments
-                        .Where(e => e.UserId == userId)
-                        .Select(e => e.CourseId)
-                        .ToListAsync();
-
-                    var recommended = await db.Courses
-                        .Where(c => !c.IsDeleted && c.Status == "Published" && !enrolledCourseIds.Contains(c.CourseId))
-                        .Where(c => c.CourseCategories.Any(cc => userCategoryIds.Contains(cc.CategoryId)))
-                        .OrderByDescending(c => c.StudentCount)
-                        .ThenByDescending(c => c.AverageRating)
-                        .Take(10)
-                        .Select(c => c.CourseId)
-                        .ToListAsync();
-
-                    if (recommended.Any())
-                    {
-                        return new RecommendationResult
-                        {
-                            RecommendedCourseIds = recommended,
-                            Scores = recommended.Select((_, idx) => 1.0 - (idx * 0.05)).ToList()
-                        };
-                    }
-
-                    var topGeneral = await db.Courses
-                        .Where(c => !c.IsDeleted && c.Status == "Published" && !enrolledCourseIds.Contains(c.CourseId))
-                        .OrderByDescending(c => c.StudentCount)
-                        .Take(10)
-                        .Select(c => c.CourseId)
-                        .ToListAsync();
-
-                    return new RecommendationResult
-                    {
-                        RecommendedCourseIds = topGeneral,
-                        Scores = topGeneral.Select((_, idx) => 1.0 - (idx * 0.05)).ToList()
-                    };
-                }
-            }
-            catch (Exception fallbackEx)
-            {
-                _logger.LogError(fallbackEx, "Failed to execute Recommend fallback.");
+                _logger.LogError(ex, "Error calling ML Recommend Compatibility API. Running simple fallback.");
             }
 
             return new RecommendationResult();
@@ -266,17 +191,12 @@ namespace EduMy.Backend.Services
                 {
                     return await response.Content.ReadFromJsonAsync<AnalyzeContentResult>();
                 }
-                else
-                {
-                    _logger.LogWarning("Analyze content API returned status code {StatusCode}", response.StatusCode);
-                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error calling ML Analyze Content API");
+                _logger.LogError(ex, "Error calling ML Analyze Content Compatibility API");
             }
 
-            // Fallback safe value
             return new AnalyzeContentResult
             {
                 Tags = new List<string> { "general" },

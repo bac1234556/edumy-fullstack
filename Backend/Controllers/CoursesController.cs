@@ -273,6 +273,81 @@ namespace EduMy.Backend.Controllers
             });
         }
 
+        [HttpGet("{id}/similar")]
+        public async Task<IActionResult> GetSimilarCourses(int id, [FromQuery] int k = 5)
+        {
+            var recs = await _mlService.GetSimilarCoursesAsync(id, k);
+            if (recs == null || !recs.Any())
+            {
+                return Ok(Array.Empty<object>());
+            }
+
+            var courseIds = recs.Select(r => r.CourseId).ToList();
+            var courses = await _context.Courses
+                .Where(c => !c.IsDeleted && c.Status == "Published" && courseIds.Contains(c.CourseId))
+                .Include(c => c.Instructor)
+                .ToListAsync();
+
+            var ordered = recs
+                .Select(r => courses.FirstOrDefault(c => c.CourseId == r.CourseId))
+                .Where(c => c != null)
+                .Select(c => new
+                {
+                    c!.CourseId,
+                    c.Title,
+                    c.ThumbnailUrl,
+                    c.Price,
+                    c.AverageRating,
+                    c.StudentCount,
+                    InstructorName = c.Instructor?.FullName
+                })
+                .ToList();
+
+            return Ok(ordered);
+        }
+
+        [HttpGet("{id}/bundle")]
+        public async Task<IActionResult> GetBundleRecommendations(int id, [FromQuery] int? userId = null, [FromQuery] int k = 3)
+        {
+            if (userId == null)
+            {
+                var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (int.TryParse(userIdStr, out int parsedUserId))
+                {
+                    userId = parsedUserId;
+                }
+            }
+
+            var result = await _mlService.GetBundleRecommendationsAsync(id, userId, k);
+            if (result == null || !result.Items.Any())
+            {
+                return Ok(new { source = "none", items = Array.Empty<object>() });
+            }
+
+            var courseIds = result.Items.Select(r => r.CourseId).ToList();
+            var courses = await _context.Courses
+                .Where(c => !c.IsDeleted && c.Status == "Published" && courseIds.Contains(c.CourseId))
+                .Include(c => c.Instructor)
+                .ToListAsync();
+
+            var orderedItems = result.Items
+                .Select(r => courses.FirstOrDefault(c => c.CourseId == r.CourseId))
+                .Where(c => c != null)
+                .Select(c => new
+                {
+                    c!.CourseId,
+                    c.Title,
+                    c.ThumbnailUrl,
+                    c.Price,
+                    c.AverageRating,
+                    c.StudentCount,
+                    InstructorName = c.Instructor?.FullName
+                })
+                .ToList();
+
+            return Ok(new { source = result.Source, items = orderedItems });
+        }
+
         [Authorize(Roles = "Instructor")]
         [HttpPost("ai-suggest")]
         public async Task<IActionResult> GetAiSuggest([FromBody] AiSuggestRequestDto dto)
@@ -282,27 +357,31 @@ namespace EduMy.Backend.Controllers
                 return BadRequest("Title is required.");
             }
 
-            var classification = await _mlService.ClassifyCourseAsync(dto.Title, dto.Description ?? "");
+            var classification = await _mlService.ClassifyCourseNewAsync(dto.Title, dto.Description ?? "");
             if (classification == null)
-                return Ok(new { recommendedCategory = (object?)null, alternatives = Array.Empty<object>(), source = "unavailable" });
+                return Ok(new { recommendedCategory = (object?)null, alternatives = Array.Empty<object>(), topics = Array.Empty<object>(), source = "unavailable" });
 
             var categories = await _context.Categories.AsNoTracking().Where(c => c.IsActive && c.Name != "Uncategorized").ToListAsync();
-            var matched = categories.FirstOrDefault(c => c.Name.Equals(classification.Category, StringComparison.OrdinalIgnoreCase));
-            var recommendation = matched != null && classification.Confidence >= 0.65
-                ? new { matched.CategoryId, matched.Name, confidence = classification.Confidence }
+            var matched = categories.FirstOrDefault(c => c.Name.Equals(classification.PrimaryCategory.Name, StringComparison.OrdinalIgnoreCase));
+            var recommendation = matched != null
+                ? new { matched.CategoryId, matched.Name, confidence = classification.PrimaryCategory.Score }
                 : null;
-            var alternatives = classification.Alternatives
+            var alternatives = classification.CategorySuggestions
                 .Select(candidate => new
                 {
-                    category = categories.FirstOrDefault(c => c.Name.Equals(candidate.Category, StringComparison.OrdinalIgnoreCase)),
-                    candidate.Confidence
+                    category = categories.FirstOrDefault(c => c.Name.Equals(candidate.Name, StringComparison.OrdinalIgnoreCase)),
+                    confidence = candidate.Score
                 })
                 .Where(item => item.category != null)
                 .Take(3)
-                .Select(item => new { item.category!.CategoryId, item.category.Name, confidence = item.Confidence })
+                .Select(item => new { item.category!.CategoryId, item.category.Name, confidence = item.confidence })
                 .ToList();
 
-            return Ok(new { recommendedCategory = recommendation, alternatives, source = classification.Source });
+            var topics = classification.Topics
+                .Select(t => new { name = t.Name, score = t.Score })
+                .ToList();
+
+            return Ok(new { recommendedCategory = recommendation, alternatives, topics, source = "ml" });
         }
 
         [Authorize(Roles = "Instructor")]
@@ -343,6 +422,8 @@ namespace EduMy.Backend.Controllers
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
+
+            course.PrimaryCategoryId = catIds.FirstOrDefault();
 
             foreach (var catId in catIds)
             {
@@ -405,6 +486,8 @@ namespace EduMy.Backend.Controllers
             {
                 existing.CourseCategories.Remove(cc);
             }
+
+            existing.PrimaryCategoryId = catIds.FirstOrDefault();
 
             var currentCatIds = existing.CourseCategories.Select(cc => cc.CategoryId).ToHashSet();
             foreach (var catId in catIds)

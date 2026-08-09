@@ -1,0 +1,33 @@
+dataset:
+  provider: kaggle
+  slug: septa97/100k-courseras-course-reviews-dataset
+  domain: online course reviews
+  expected_files:
+    - reviews.tsv
+    - reviews_by_course.tsv
+  expected_semantic_fields:
+    review_text:
+      candidates: [Review, review, reviews, text]
+    source_label:
+      candidates: [Label, label, rating, Rating]
+    course_id:
+      optional: true
+      candidates: [CourseId, course_id, courseId]
+  target_note: "Source labels are derived from 1-5 star ratings; rating/label is target-only and forbidden as X."
+  language_scope: english-first
+
+label_mapping:
+  named:
+    very_negative: Negative
+    negative: Negative
+    neutral: Neutral
+    positive: Positive
+    very_positive: Positive
+  numeric:
+    "1": Negative
+    "2": Negative
+    "3": Neutral
+    "4": Positive
+    "5": Positive
+
+manual_download_destination: data/raw/

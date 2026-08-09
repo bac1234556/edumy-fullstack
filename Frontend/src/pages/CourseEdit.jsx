@@ -42,6 +42,7 @@ export default function CourseEdit() {
   const [curriculumDirty, setCurriculumDirty] = useState(false);
   const [errors, setErrors] = useState([]);
   const [activeTab, setActiveTab] = useState('curriculum'); // 'curriculum' or 'finalQuiz'
+  const [suggestedTopics, setSuggestedTopics] = useState([]);
   const [pendingDraft, setPendingDraft] = useState(null);
   const [pendingNavigation, setPendingNavigation] = useState(null);
   const initialSnapshotRef = useRef(normalize(emptyForm));
@@ -123,6 +124,9 @@ export default function CourseEdit() {
       } else {
         toast.error(data.source === 'unavailable' ? 'Dịch vụ gợi ý hiện không khả dụng. Danh mục hiện tại được giữ nguyên.' : 'Chưa đủ độ tin cậy để tự chọn danh mục.');
       }
+      if (data.topics) {
+        setSuggestedTopics(data.topics);
+      }
     } catch { toast.error('Không thể lấy gợi ý danh mục.'); }
     finally { setAiLoading(false); }
   };
@@ -198,7 +202,7 @@ export default function CourseEdit() {
       <>
         <form id="course-edit-form" onSubmit={submit} noValidate>
           {categoryError && <div className="error-alert">{categoryError}</div>}
-          <CourseBasicInfoForm form={form} categories={categories} thumbnailFile={thumbnail} onChange={change} onFileChange={selectFile} onAiSuggest={suggest} aiLoading={aiLoading} showStatus />
+          <CourseBasicInfoForm form={form} categories={categories} thumbnailFile={thumbnail} onChange={change} onFileChange={selectFile} onAiSuggest={suggest} aiLoading={aiLoading} showStatus suggestedTopics={suggestedTopics} />
         </form>
         <CurriculumBuilder ref={curriculumRef} courseId={Number(id)} onChanged={() => setCurriculumDirty(true)} />
         <div className="form-actions course-edit-actions mt-4">

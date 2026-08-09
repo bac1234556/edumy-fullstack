@@ -12,7 +12,7 @@ export function validateCourseForm(form, includeStatus = false) {
 
 import CourseThumbnail from './CourseThumbnail';
 
-export default function CourseBasicInfoForm({ form, categories, thumbnailFile, onChange, onFileChange, onAiSuggest, aiLoading, showStatus = false }) {
+export default function CourseBasicInfoForm({ form, categories, thumbnailFile, onChange, onFileChange, onAiSuggest, aiLoading, showStatus = false, suggestedTopics = [] }) {
   return <div className="step-content">
     <h2>Thông tin cơ bản</h2>
     <div className="form-group">
@@ -62,6 +62,19 @@ export default function CourseBasicInfoForm({ form, categories, thumbnailFile, o
         })}
       </div>
     </div>
+
+    {suggestedTopics && suggestedTopics.length > 0 && (
+      <div className="form-group mt-3 mb-3">
+        <label className="d-block mb-2">✨ Chủ đề liên quan đề xuất bởi AI (AI Topics)</label>
+        <div className="d-flex flex-wrap gap-2 p-2 border rounded bg-white">
+          {suggestedTopics.map(topic => (
+            <span key={topic.name} className="badge bg-info text-dark" style={{fontSize: '11px', padding: '6px 12px'}}>
+              {topic.name} ({Math.round(topic.score * 100)}%)
+            </span>
+          ))}
+        </div>
+      </div>
+    )}
 
     <div className="form-group">
       <label>Ảnh đại diện</label>

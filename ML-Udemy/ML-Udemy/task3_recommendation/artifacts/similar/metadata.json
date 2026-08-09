@@ -1,0 +1,26 @@
+{
+    "version": "1.0",
+    "dataset_slug": "longnguyen3774/coursera-courses-metadata-for-analytics-2025",
+    "chosen_model": "S3_WordChar_TFIDF",
+    "hyperparameters": "Pipeline with TF-IDF",
+    "input_fields": [
+        "title",
+        "description"
+    ],
+    "test_metrics": {
+        "Precision@5": 0.6162762022194821,
+        "Recall@5": 0.024439003677537575,
+        "HitRate@5": 0.9297163995067818,
+        "NDCG@5": 0.5082493706892537,
+        "Precision@10": 0.5530209617755857,
+        "Recall@10": 0.04198025082724369,
+        "HitRate@10": 0.9642416769420469,
+        "NDCG@10": 0.4825035100439755,
+        "MRR@10": 0.8104711017164777,
+        "avg_cat_consistency@10": 0.6071516646115906,
+        "avg_skill_jaccard@10": 0.15947342031095135,
+        "query_coverage": 0.9987684729064039
+    },
+    "post_test_refit_on_all_data": true,
+    "disclaimer": "Similarity score is NOT a probability."
+}

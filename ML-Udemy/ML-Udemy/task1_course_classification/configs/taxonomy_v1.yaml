@@ -1,0 +1,87 @@
+version: "1.0"
+
+primary_categories:
+  - "Arts & Humanities"
+  - "Business & Management"
+  - "Computer Science & Development"
+  - "Data Science & AI"
+  - "Information Technology"
+  - "Health & Wellness"
+  - "Math & Logic"
+  - "Personal Development"
+  - "Engineering"
+  - "Social Sciences"
+  - "Language Learning"
+
+source_category_mapping:
+  "arts and humanities": "Arts & Humanities"
+  "business": "Business & Management"
+  "computer science": "Computer Science & Development"
+  "data science": "Data Science & AI"
+  "information technology": "Information Technology"
+  "health": "Health & Wellness"
+  "math and logic": "Math & Logic"
+  "personal development": "Personal Development"
+  "physical science and engineering": "Engineering"
+  "social sciences": "Social Sciences"
+  "language learning": "Language Learning"
+
+# Candidate topic taxonomy. The training pipeline keeps only active topics
+# with sufficient TRAIN support. Aliases are matched against source `skills`,
+# never against title/description when generating ground-truth labels.
+#
+# ADDED ALIASES (documented per spec): Added aliases discovered from raw `skills`
+# vocabulary in dataset longnguyen3774/coursera-courses-metadata-for-analytics-2025.
+# Only obviously equivalent aliases were added (no fuzzy/semantic expansion).
+# Changes documented in reports/taxonomy_audit.md per spec §Step 4.
+topics:
+  "Python": ["python", "python programming", "python (programming language)", "python libraries"]
+  "Java": ["java", "java programming", "java (programming language)"]
+  "C/C++": ["c programming", "c programming language", "c++", "cpp", "c (programming language)"]
+  "C#": ["c#", "c sharp", "c# (programming language)"]
+  "JavaScript & TypeScript": ["javascript", "typescript", "javascript programming", "html", "css", "html and css"]
+  "Web Development": ["web development", "full stack development", "full-stack development", "web application development", "web applications", "web app development"]
+  "Frontend Development": ["front-end development", "frontend development", "front end development", "front-end web development"]
+  "Backend Development": ["back-end development", "backend development", "back end development"]
+  "React": ["react", "react.js", "reactjs", "react (web framework)", "react js"]
+  "Angular": ["angular", "angularjs", "angular (web framework)"]
+  "Node.js": ["node.js", "nodejs", "node js"]
+  "Spring Boot": ["spring boot", "spring framework", "spring", "spring (web framework)"]
+  ".NET / ASP.NET": [".net", "dotnet", "asp.net", "asp.net core"]
+  "Mobile Development": ["mobile development", "android development", "ios development", "mobile app development", "android (operating system)", "ios (apple)"]
+  "API Development": ["api", "api development", "rest api", "restful api", "web api", "api design"]
+  "Software Testing": ["software testing", "unit testing", "test automation", "quality assurance", "software quality assurance", "test-driven development", "automated testing"]
+  "Git & GitHub": ["git", "github", "version control", "git (version control)"]
+  "SQL & Databases": ["sql", "database", "databases", "database management", "relational database", "mysql", "postgresql", "data management", "database design", "nosql"]
+  "Data Analysis": ["data analysis", "data analytics", "exploratory data analysis", "data manipulation", "data processing", "data collection", "data-driven decision-making", "applied data science"]
+  "Data Visualization": ["data visualization", "visualization", "data visualisation", "data visualization software", "tableau", "power bi", "business intelligence"]
+  "Statistics": ["statistics", "statistical analysis", "probability and statistics", "regression analysis", "statistical modeling", "statistical methods", "probability"]
+  "Machine Learning": ["machine learning", "supervised learning", "unsupervised learning", "applied machine learning", "artificial intelligence", "ai", "reinforcement learning", "scikit-learn", "ml"]
+  "Deep Learning": ["deep learning", "neural networks", "neural network", "deep neural networks"]
+  "Natural Language Processing": ["natural language processing", "nlp", "text mining", "text analysis", "natural language generation", "language models"]
+  "Computer Vision": ["computer vision", "image processing", "image analysis", "image recognition"]
+  "Generative AI & LLM": ["generative ai", "large language models", "large language model", "llm", "prompt engineering", "responsible ai", "ai ethics", "generative adversarial networks"]
+  "TensorFlow & Keras": ["tensorflow", "keras", "tensorflow (machine learning library)"]
+  "PyTorch": ["pytorch", "torch"]
+  "Data Engineering": ["data engineering", "data pipelines", "etl", "data pipeline", "data warehouse", "data lakes", "apache kafka"]
+  "Big Data": ["big data", "apache spark", "spark", "hadoop", "distributed computing"]
+  "Cloud Computing": ["cloud computing", "cloud", "cloud architecture", "cloud services", "cloud infrastructure", "cloud deployment"]
+  "AWS": ["amazon web services", "aws", "amazon aws"]
+  "Microsoft Azure": ["microsoft azure", "azure"]
+  "Google Cloud": ["google cloud", "gcp", "google cloud platform"]
+  "DevOps": ["devops", "site reliability engineering", "sre", "continuous integration and delivery", "ci/cd", "infrastructure as code"]
+  "Docker": ["docker", "containerization", "containers", "container"]
+  "Kubernetes": ["kubernetes", "k8s", "container orchestration"]
+  "Linux": ["linux", "unix", "linux administration", "bash", "shell scripting", "command line interface"]
+  "Networking": ["computer networking", "networking", "network administration", "tcp/ip", "network infrastructure"]
+  "Cybersecurity": ["cybersecurity", "cyber security", "information security", "ethical hacking", "network security", "data security", "security", "cyber attacks", "threat detection", "threat management"]
+  "Project Management": ["project management", "agile project management", "scrum", "agile methodology", "agile", "kanban", "pmp", "risk management", "project planning"]
+  "Product Management": ["product management", "product strategy", "product development"]
+  "Business Analysis": ["business analysis", "business analytics", "requirements analysis", "business intelligence"]
+  "Finance & Accounting": ["finance", "financial analysis", "accounting", "corporate finance", "financial modeling", "financial reporting", "investment management", "banking", "economics"]
+  "Marketing": ["marketing", "marketing strategy", "brand management", "sales", "customer relationship management", "crm", "retail management"]
+  "Digital Marketing": ["digital marketing", "seo", "social media marketing", "content marketing", "search engine optimization", "email marketing", "pay-per-click advertising"]
+  "Leadership": ["leadership", "people management", "team management", "organizational leadership", "decision making", "strategic thinking", "change management", "management"]
+  "UI/UX Design": ["user experience", "ux", "ui", "ui/ux", "user interface", "figma", "user interface design", "user research", "product design", "interaction design", "prototyping"]
+  "Excel": ["microsoft excel", "excel", "spreadsheets", "google sheets"]
+  "Communication": ["communication", "business communication", "professional communication", "writing", "storytelling", "public speaking", "presentation skills"]

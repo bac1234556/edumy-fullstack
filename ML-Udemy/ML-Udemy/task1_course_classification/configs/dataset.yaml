@@ -1,0 +1,24 @@
+primary_dataset:
+  platform: kaggle
+  slug: "longnguyen3774/coursera-courses-metadata-for-analytics-2025"
+  expected_columns:
+    - name
+    - category
+    - skills
+    - content
+  optional_columns:
+    - what_you_learn
+    - language
+    - url
+    - instructors
+  feature_columns:
+    title: name
+    description: content
+  label_columns:
+    primary_category: category
+    topics: skills
+  license_note: "Kaggle page states CC BY-NC-SA 4.0; educational/non-commercial scope only."
+
+fallback_policy:
+  description: "If content is missing, fallback to what_you_learn and report fallback rate."
+  download: "If agent cannot download Kaggle automatically, stop and ask user to place the downloaded dataset under data/raw; do not fabricate data."

@@ -1,0 +1,4 @@
+model,threshold,micro_f1,macro_f1,hamming_loss,subset_accuracy,precision_at_3,recall_at_3,precision_at_5,recall_at_5
+OvR_SGD_log_loss,0.45,0.6902,0.6555,0.032,0.298,0.5281,0.8108,0.3635,0.8913
+OvR_LogisticRegression,0.5,0.6792,0.6408,0.0335,0.2882,0.5261,0.81,0.3675,0.8979
+OvR_LinearSVC,0.45,0.5199,0.4371,0.0343,0.2275,0.5229,0.8042,0.3624,0.884

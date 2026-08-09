@@ -1,0 +1,37 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.env
+.DS_Store
+*.egg-info/
+dist/
+build/
+*.egg
+*.log
+*.tmp
+
+# Large data files - do not commit
+data/raw/
+data/interim/
+data/processed/
+
+# Model binaries - large, not committed
+artifacts/category/best_model.joblib
+artifacts/topics/best_model.joblib
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Reports generated figures (large)
+reports/figures/*.png
+reports/figures/*.jpg

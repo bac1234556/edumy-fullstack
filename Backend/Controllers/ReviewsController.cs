@@ -66,7 +66,7 @@ namespace EduMy.Backend.Controllers
                 return Conflict(new { message = "Bạn đã đánh giá khóa học này." });
 
             // ML Integration: Analyze Sentiment
-            var sentimentResult = await _mlService.AnalyzeSentimentAsync(review.Comment, review.Rating);
+            var sentimentResult = await _mlService.AnalyzeSentimentNewAsync(review.Comment);
             ApplySentiment(review, sentimentResult);
 
             review.CourseId = courseId;
@@ -117,7 +117,7 @@ namespace EduMy.Backend.Controllers
             existing.Comment = review.Comment;
             existing.Rating = review.Rating;
             existing.UpdatedAt = DateTime.UtcNow;
-            ApplySentiment(existing, await _mlService.AnalyzeSentimentAsync(existing.Comment, existing.Rating));
+            ApplySentiment(existing, await _mlService.AnalyzeSentimentNewAsync(existing.Comment));
             
             try
             {
@@ -172,21 +172,21 @@ namespace EduMy.Backend.Controllers
                 .OrderBy(r => r.ReviewId)
                 .ToListAsync();
             foreach (var item in reviews)
-                ApplySentiment(item, await _mlService.AnalyzeSentimentAsync(item.Comment, item.Rating));
+                ApplySentiment(item, await _mlService.AnalyzeSentimentNewAsync(item.Comment));
             await _context.SaveChangesAsync();
             return Ok(new { updated = reviews.Count, pipelineVersion });
         }
 
-        private static void ApplySentiment(Review review, EduMy.Backend.Services.SentimentResult? result)
+        private static void ApplySentiment(Review review, EduMy.Backend.Services.SentimentModel? result)
         {
-            review.SentimentLabel = result?.Label?.Trim().ToLowerInvariant() switch
+            review.SentimentLabel = result?.Sentiment?.Label?.Trim().ToLowerInvariant() switch
             {
                 "positive" => "Positive", "negative" => "Negative", "neutral" => "Neutral", _ => "Unknown"
             };
-            review.SentimentScore = result?.Score ?? 0.5;
-            review.SentimentConfidence = result?.Confidence ?? 0;
-            review.SentimentSource = result?.Source ?? "unavailable";
-            review.SentimentModelVersion = "sentiment-hybrid-v2";
+            review.SentimentScore = result?.Sentiment?.Score ?? 0.5;
+            review.SentimentConfidence = result?.Sentiment?.Score ?? 0;
+            review.SentimentSource = "ml";
+            review.SentimentModelVersion = "1.0";
             review.SentimentUpdatedAt = DateTime.UtcNow;
         }
 

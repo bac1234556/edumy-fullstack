@@ -19,6 +19,8 @@ namespace EduMy.Backend.Data
          public DbSet<CourseSection> CourseSections { get; set; } = null!;
         public DbSet<Lesson> Lessons { get; set; } = null!;
         public DbSet<CourseCategory> CourseCategories { get; set; } = null!;
+        public DbSet<Topic> Topics { get; set; } = null!;
+        public DbSet<CourseTopic> CourseTopics { get; set; } = null!;
         public DbSet<Enrollment> Enrollments { get; set; } = null!;
         public DbSet<Review> Reviews { get; set; } = null!;
         public DbSet<Order> Orders { get; set; } = null!;
@@ -99,6 +101,27 @@ namespace EduMy.Backend.Data
                 .WithMany(u => u.Courses)
                 .HasForeignKey(c => c.InstructorId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Course>()
+                .HasOne(c => c.PrimaryCategory)
+                .WithMany()
+                .HasForeignKey(c => c.PrimaryCategoryId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<CourseTopic>()
+                .HasKey(ct => new { ct.CourseId, ct.TopicId });
+
+            modelBuilder.Entity<CourseTopic>()
+                .HasOne(ct => ct.Course)
+                .WithMany(c => c.CourseTopics)
+                .HasForeignKey(ct => ct.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CourseTopic>()
+                .HasOne(ct => ct.Topic)
+                .WithMany(t => t.CourseTopics)
+                .HasForeignKey(ct => ct.TopicId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<CourseCategory>()
                 .HasKey(cc => new { cc.CourseId, cc.CategoryId });

@@ -9,6 +9,12 @@ namespace EduMy.Backend.Services
         Task<ClassificationResult?> ClassifyCourseAsync(string title, string description);
         Task<RecommendationResult?> RecommendCoursesAsync(int userId);
         Task<AnalyzeContentResult?> AnalyzeContentAsync(string title, string description);
+
+        // Direct endpoints for unified ML services
+        Task<CourseClassificationModel?> ClassifyCourseNewAsync(string title, string description);
+        Task<SentimentModel?> AnalyzeSentimentNewAsync(string comment);
+        Task<List<SimilarItemResult>?> GetSimilarCoursesAsync(int courseId, int k = 5);
+        Task<BundleResult?> GetBundleRecommendationsAsync(int courseId, int? userId = null, int k = 3);
     }
 
     public class MachineLearningService : IMachineLearningService
@@ -89,6 +95,11 @@ namespace EduMy.Backend.Services
             }
             return null;
         }
+
+        public Task<CourseClassificationModel?> ClassifyCourseNewAsync(string title, string description) => Task.FromResult<CourseClassificationModel?>(null);
+        public Task<SentimentModel?> AnalyzeSentimentNewAsync(string comment) => Task.FromResult<SentimentModel?>(null);
+        public Task<List<SimilarItemResult>?> GetSimilarCoursesAsync(int courseId, int k = 5) => Task.FromResult<List<SimilarItemResult>?>(null);
+        public Task<BundleResult?> GetBundleRecommendationsAsync(int courseId, int? userId = null, int k = 3) => Task.FromResult<BundleResult?>(null);
     }
 
     public class SentimentResult
@@ -157,5 +168,80 @@ namespace EduMy.Backend.Services
 
         [JsonPropertyName("popularity_score")]
         public double PopularityScore { get; set; }
+    }
+
+    public class CourseClassificationModel
+    {
+        [JsonPropertyName("primaryCategory")]
+        public CategorySuggestion PrimaryCategory { get; set; } = null!;
+
+        [JsonPropertyName("categorySuggestions")]
+        public List<CategorySuggestion> CategorySuggestions { get; set; } = new();
+
+        [JsonPropertyName("topics")]
+        public List<TopicSuggestion> Topics { get; set; } = new();
+    }
+
+    public class CategorySuggestion
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = string.Empty;
+
+        [JsonPropertyName("score")]
+        public double Score { get; set; }
+    }
+
+    public class TopicSuggestion
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = string.Empty;
+
+        [JsonPropertyName("score")]
+        public double Score { get; set; }
+    }
+
+    public class SentimentModel
+    {
+        [JsonPropertyName("sentiment")]
+        public SentimentDetail Sentiment { get; set; } = null!;
+
+        [JsonPropertyName("scores")]
+        public List<SentimentDetail> Scores { get; set; } = new();
+    }
+
+    public class SentimentDetail
+    {
+        [JsonPropertyName("label")]
+        public string Label { get; set; } = string.Empty;
+
+        [JsonPropertyName("score")]
+        public double Score { get; set; }
+    }
+
+    public class SimilarItemResult
+    {
+        [JsonPropertyName("courseId")]
+        public int CourseId { get; set; }
+
+        [JsonPropertyName("score")]
+        public double Score { get; set; }
+    }
+
+    public class BundleResult
+    {
+        [JsonPropertyName("source")]
+        public string Source { get; set; } = string.Empty;
+
+        [JsonPropertyName("items")]
+        public List<BundleItemResult> Items { get; set; } = new();
+    }
+
+    public class BundleItemResult
+    {
+        [JsonPropertyName("courseId")]
+        public int CourseId { get; set; }
+
+        [JsonPropertyName("score")]
+        public double Score { get; set; }
     }
 }

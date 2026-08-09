@@ -1,0 +1,242 @@
+[
+  {
+    "id": 1,
+    "title": "Java Spring Boot REST API with Docker",
+    "result": {
+      "primary_category": {
+        "label": "Computer Science & Development",
+        "score": 0.8763
+      },
+      "category_suggestions": [
+        {
+          "label": "Computer Science & Development",
+          "score": 0.8763
+        },
+        {
+          "label": "Social Sciences",
+          "score": 0.0196
+        },
+        {
+          "label": "Data Science & AI",
+          "score": 0.0179
+        }
+      ],
+      "topics": [
+        {
+          "label": "Java",
+          "score": 0.9902
+        },
+        {
+          "label": "API Development",
+          "score": 0.9753
+        },
+        {
+          "label": "Docker",
+          "score": 0.5605
+        },
+        {
+          "label": "Kubernetes",
+          "score": 0.3068
+        },
+        {
+          "label": "SQL & Databases",
+          "score": 0.2122
+        }
+      ]
+    },
+    "schema_errors": [],
+    "error": null
+  },
+  {
+    "id": 2,
+    "title": "Python Machine Learning",
+    "result": {
+      "primary_category": {
+        "label": "Data Science & AI",
+        "score": 0.8864
+      },
+      "category_suggestions": [
+        {
+          "label": "Data Science & AI",
+          "score": 0.8864
+        },
+        {
+          "label": "Information Technology",
+          "score": 0.0591
+        },
+        {
+          "label": "Social Sciences",
+          "score": 0.0156
+        }
+      ],
+      "topics": [
+        {
+          "label": "Python",
+          "score": 0.9777
+        },
+        {
+          "label": "Machine Learning",
+          "score": 0.974
+        },
+        {
+          "label": "Statistics",
+          "score": 0.9087
+        },
+        {
+          "label": "Data Analysis",
+          "score": 0.8677
+        },
+        {
+          "label": "Deep Learning",
+          "score": 0.7083
+        }
+      ]
+    },
+    "schema_errors": [],
+    "error": null
+  },
+  {
+    "id": 3,
+    "title": "AWS Docker Kubernetes DevOps",
+    "result": {
+      "primary_category": {
+        "label": "Information Technology",
+        "score": 0.8876
+      },
+      "category_suggestions": [
+        {
+          "label": "Information Technology",
+          "score": 0.8876
+        },
+        {
+          "label": "Computer Science & Development",
+          "score": 0.0418
+        },
+        {
+          "label": "Social Sciences",
+          "score": 0.0179
+        }
+      ],
+      "topics": [
+        {
+          "label": "DevOps",
+          "score": 0.9998
+        },
+        {
+          "label": "Docker",
+          "score": 0.997
+        },
+        {
+          "label": "Kubernetes",
+          "score": 0.9923
+        },
+        {
+          "label": "AWS",
+          "score": 0.9719
+        },
+        {
+          "label": "Cloud Computing",
+          "score": 0.8677
+        }
+      ]
+    },
+    "schema_errors": [],
+    "error": null
+  },
+  {
+    "id": 4,
+    "title": "Project Management Fundamentals",
+    "result": {
+      "primary_category": {
+        "label": "Business & Management",
+        "score": 0.8691
+      },
+      "category_suggestions": [
+        {
+          "label": "Business & Management",
+          "score": 0.8691
+        },
+        {
+          "label": "Engineering",
+          "score": 0.0494
+        },
+        {
+          "label": "Computer Science & Development",
+          "score": 0.0262
+        }
+      ],
+      "topics": [
+        {
+          "label": "Project Management",
+          "score": 0.9983
+        },
+        {
+          "label": "Leadership",
+          "score": 0.8867
+        },
+        {
+          "label": "Communication",
+          "score": 0.2896
+        },
+        {
+          "label": "Finance & Accounting",
+          "score": 0.1997
+        },
+        {
+          "label": "Business Analysis",
+          "score": 0.124
+        }
+      ]
+    },
+    "schema_errors": [],
+    "error": null
+  },
+  {
+    "id": 5,
+    "title": "UI UX Design with Figma",
+    "result": {
+      "primary_category": {
+        "label": "Computer Science & Development",
+        "score": 0.8752
+      },
+      "category_suggestions": [
+        {
+          "label": "Computer Science & Development",
+          "score": 0.8752
+        },
+        {
+          "label": "Information Technology",
+          "score": 0.0404
+        },
+        {
+          "label": "Engineering",
+          "score": 0.0277
+        }
+      ],
+      "topics": [
+        {
+          "label": "UI/UX Design",
+          "score": 0.9989
+        },
+        {
+          "label": "Frontend Development",
+          "score": 0.4349
+        },
+        {
+          "label": "Business Analysis",
+          "score": 0.1446
+        },
+        {
+          "label": "Generative AI & LLM",
+          "score": 0.1424
+        },
+        {
+          "label": "Web Development",
+          "score": 0.1305
+        }
+      ]
+    },
+    "schema_errors": [],
+    "error": null
+  }
+]

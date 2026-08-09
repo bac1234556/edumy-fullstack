@@ -1,0 +1,58 @@
+project:
+  name: edumy_ml_task3_recommendation
+  version: "1.0"
+  random_seed: 42
+
+paths:
+  similar_raw: data/similar/raw
+  similar_processed: data/similar/processed
+  bundle_raw: data/bundle/raw
+  bundle_processed: data/bundle/processed
+  similar_artifacts: artifacts/similar
+  bundle_artifacts: artifacts/bundle
+  reports: reports
+
+similar:
+  split:
+    train: 0.70
+    validation: 0.15
+    test: 0.15
+  feature_fields:
+    - title
+    - description
+  forbidden_model_fields:
+    - category
+    - skills
+  evaluation:
+    k_values: [5, 10]
+    primary_metric: ndcg_at_10
+    relevance:
+      binary_requires_same_category: true
+      binary_min_shared_skills: 1
+      category_bonus: 0.20
+  models:
+    word_tfidf:
+      ngram_range: [1, 2]
+      min_df: 2
+      max_df: 0.98
+      sublinear_tf: true
+    char_tfidf:
+      analyzer: char_wb
+      ngram_range: [3, 5]
+      min_df: 2
+      sublinear_tf: true
+    lsa_components: [100, 200]
+
+bundle:
+  positive_rating: 1
+  preferred_min_positive_interactions_per_user: 5
+  fallback_min_positive_interactions_per_user: 3
+  validation_holdout_per_user: 1
+  test_holdout_per_user: 1
+  evaluation:
+    k_values: [5, 10]
+    primary_metric: ndcg_at_10
+  svd_components: [32, 64, 128]
+
+release:
+  status: FROZEN

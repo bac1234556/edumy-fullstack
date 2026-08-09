@@ -7,8 +7,29 @@ public static class DataSeeder
 {
     private static readonly string[] CategoryNames =
     [
-        "Development", "Business", "Design", "Marketing", "IT & Software", "Office Productivity",
-        "Personal Development", "Photography", "Data Science", "Cloud Computing", "Cyber Security", "Mobile Development"
+        "Arts & Humanities",
+        "Business & Management",
+        "Computer Science & Development",
+        "Data Science & AI",
+        "Information Technology",
+        "Health & Wellness",
+        "Math & Logic",
+        "Personal Development",
+        "Engineering",
+        "Social Sciences",
+        "Language Learning"
+    ];
+
+    private static readonly string[] ActiveTopics =
+    [
+        "API Development", "AWS", "Big Data", "Business Analysis", "C/C++", "Cloud Computing",
+        "Communication", "Computer Vision", "Cybersecurity", "Data Analysis", "Data Engineering",
+        "Data Visualization", "Deep Learning", "DevOps", "Digital Marketing", "Docker", "Excel",
+        "Finance & Accounting", "Frontend Development", "Generative AI & LLM", "Git & GitHub",
+        "Google Cloud", "Java", "JavaScript & TypeScript", "Kubernetes", "Leadership", "Linux",
+        "Machine Learning", "Marketing", "Microsoft Azure", "Mobile Development", "Natural Language Processing",
+        "Networking", "Product Management", "Project Management", "Python", "SQL & Databases",
+        "Software Testing", "Statistics", "TensorFlow & Keras", "UI/UX Design", "Web Development"
     ];
 
     public static void Initialize(IServiceProvider services)
@@ -19,7 +40,22 @@ public static class DataSeeder
         EnsureRoles(db);
         var users = EnsureUsers(db);
         var categories = EnsureCategories(db);
+        var topics = EnsureTopics(db);
         var courses = EnsureCourses(db, users.Instructors, categories);
+        
+        // Ensure PrimaryCategoryId is populated for all courses
+        foreach (var c in db.Courses.Where(c => c.PrimaryCategoryId == null).ToList())
+        {
+            var cc = db.CourseCategories.FirstOrDefault(x => x.CourseId == c.CourseId);
+            if (cc != null)
+            {
+                c.PrimaryCategoryId = cc.CategoryId;
+            }
+        }
+        db.SaveChanges();
+
+        EnsureCourseTopics(db, courses, topics);
+
         BackfillCourseThumbnails(db);
         EnsureCourseSectionsAndLessons(db, courses);
         EnsureEnrollments(db, users.Students, courses);
@@ -53,7 +89,7 @@ public static class DataSeeder
         for (var i = 0; i < 12; i++)
         {
             var email = i switch { 0 => "instructor@edumy.com", 1 => "instructor2@edumy.com", 2 => "instructor3@edumy.com", _ => $"instructor{i + 1:00}@edumy.com" };
-            instructors.Add(EnsureUser(db, email, instructorNames[i], "Instructor", "123123", $"Edumy instructor specializing in {CategoryNames[i]}"));
+            instructors.Add(EnsureUser(db, email, instructorNames[i], "Instructor", "123123", $"Edumy instructor specializing in {CategoryNames[i % CategoryNames.Length]}"));
         }
 
         var students = new List<User>();
@@ -621,4 +657,67 @@ public static class DataSeeder
     }
 
     private static string Slug(string value) => System.Text.RegularExpressions.Regex.Replace(value.ToLowerInvariant(), "[^a-z0-9]+", "-").Trim('-');
+
+    private static List<Topic> EnsureTopics(ApplicationDbContext db)
+    {
+        var list = new List<Topic>();
+        foreach (var name in ActiveTopics)
+        {
+            var topic = db.Topics.FirstOrDefault(t => t.Name == name);
+            if (topic == null)
+            {
+                topic = new Topic { Name = name };
+                db.Topics.Add(topic);
+            }
+            list.Add(topic);
+        }
+        db.SaveChanges();
+        return db.Topics.OrderBy(t => t.TopicId).ToList();
+    }
+
+    private static void EnsureCourseTopics(ApplicationDbContext db, List<Course> courses, List<Topic> topics)
+    {
+        foreach (var course in courses)
+        {
+            if (db.CourseTopics.Any(ct => ct.CourseId == course.CourseId)) continue;
+
+            var titleLower = course.Title.ToLower();
+            var matchedTopics = new List<Topic>();
+            
+            foreach (var topic in topics)
+            {
+                var topicNameLower = topic.Name.ToLower();
+                if (topicNameLower.Contains(" & "))
+                {
+                    var parts = topicNameLower.Split(new[] { " & " }, StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Any(p => titleLower.Contains(p))) matchedTopics.Add(topic);
+                }
+                else if (topicNameLower.Contains("/"))
+                {
+                    var parts = topicNameLower.Split('/');
+                    if (parts.Any(p => titleLower.Contains(p))) matchedTopics.Add(topic);
+                }
+                else
+                {
+                    if (titleLower.Contains(topicNameLower)) matchedTopics.Add(topic);
+                }
+            }
+
+            // Fallback: assign 1-2 random topics if none matched by keyword
+            if (matchedTopics.Count == 0)
+            {
+                var random = new Random(course.CourseId);
+                var t1 = topics[random.Next(topics.Count)];
+                var t2 = topics[random.Next(topics.Count)];
+                matchedTopics.Add(t1);
+                if (t1.TopicId != t2.TopicId) matchedTopics.Add(t2);
+            }
+
+            foreach (var topic in matchedTopics.Take(3))
+            {
+                db.CourseTopics.Add(new CourseTopic { CourseId = course.CourseId, TopicId = topic.TopicId });
+            }
+        }
+        db.SaveChanges();
+    }
 }

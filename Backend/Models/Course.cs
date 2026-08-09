@@ -26,9 +26,13 @@ namespace EduMy.Backend.Models
         public DateTime? DeletedAt { get; set; }
         public int? DeletedByUserId { get; set; }
 
+        public int? PrimaryCategoryId { get; set; }
+        public Category? PrimaryCategory { get; set; }
+
         public User? Instructor { get; set; }
         public User? DeletedByUser { get; set; }
         public ICollection<CourseCategory> CourseCategories { get; set; } = new List<CourseCategory>();
+        public ICollection<CourseTopic> CourseTopics { get; set; } = new List<CourseTopic>();
         public ICollection<CourseSection> Sections { get; set; } = new List<CourseSection>();
         public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
         public ICollection<Review> Reviews { get; set; } = new List<Review>();

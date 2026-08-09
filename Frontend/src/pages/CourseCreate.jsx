@@ -17,6 +17,7 @@ export default function CourseCreate() {
   const [saving, setSaving] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [errors, setErrors] = useState([]);
+  const [suggestedTopics, setSuggestedTopics] = useState([]);
 
   const change = event => setForm(previous => ({ ...previous, [event.target.name]: event.target.value }));
   const selectFile = event => {
@@ -36,6 +37,9 @@ export default function CourseCreate() {
         toast.success(`Đã chọn danh mục ${category.name} (${Math.round(category.confidence * 100)}%).`);
       } else {
         toast.error(data.source === 'unavailable' ? 'Dịch vụ gợi ý hiện không khả dụng. Danh mục hiện tại được giữ nguyên.' : 'Chưa đủ độ tin cậy để tự chọn danh mục.');
+      }
+      if (data.topics) {
+        setSuggestedTopics(data.topics);
       }
     } catch { toast.error('Không thể lấy gợi ý danh mục.'); }
     finally { setAiLoading(false); }
@@ -67,7 +71,7 @@ export default function CourseCreate() {
     <h1>Tạo khóa học mới</h1><p className="text-muted">Bước 1: lưu thông tin cơ bản dưới dạng Draft. Curriculum và xuất bản được thực hiện ở trang kế tiếp.</p>
     {errors.length > 0 && <div className="error-alert"><ul className="mb-0">{errors.map(error => <li key={error}>{error}</li>)}</ul></div>}
     {categoryError && <div className="error-alert">{categoryError}</div>}
-    <form onSubmit={submit}><CourseBasicInfoForm form={form} categories={categories} thumbnailFile={thumbnail} onChange={change} onFileChange={selectFile} onAiSuggest={suggest} aiLoading={aiLoading} />
+    <form onSubmit={submit}><CourseBasicInfoForm form={form} categories={categories} thumbnailFile={thumbnail} onChange={change} onFileChange={selectFile} onAiSuggest={suggest} aiLoading={aiLoading} suggestedTopics={suggestedTopics} />
       <div className="form-actions"><button type="button" className="btn btn-secondary" onClick={() => navigate('/instructor')}>Hủy</button><button className="btn btn-primary" disabled={saving}>{saving ? 'Đang tạo...' : 'Lưu Draft và tiếp tục'}</button></div>
     </form>
   </div></div>;

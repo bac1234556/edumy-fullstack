@@ -1,0 +1,7 @@
+{
+  "python.analysis.extraPaths": [
+    "./task1_course_classification/src",
+    "./task2_sentiment/src",
+    "./task3_recommendation/src"
+  ]
+}
