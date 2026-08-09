@@ -43,9 +43,9 @@ class RecommendationService:
         self.similar_loaded = False
         self.bundle_loaded = False
         
-        root_dir = Path(__file__).resolve().parent.parent.parent.parent
-        self.similar_dir = root_dir / "deployment_artifacts" / "similar_edumy"
-        self.bundle_dir = root_dir / "deployment_artifacts" / "bundle_edumy"
+        root_dir = Path(__file__).resolve().parent.parent
+        self.similar_dir = root_dir / "artifacts" / "similar"
+        self.bundle_dir = root_dir / "artifacts" / "bundle"
         
         # Similar course state
         self.similar_pipeline = None

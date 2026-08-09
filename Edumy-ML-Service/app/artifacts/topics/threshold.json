@@ -1,0 +1,4 @@
+{
+  "threshold": 0.45,
+  "note": "Threshold tuned on validation set for Micro F1 optimization. Scores are sigmoid-normalized for LinearSVC; probabilities for LR/SGD."
+}

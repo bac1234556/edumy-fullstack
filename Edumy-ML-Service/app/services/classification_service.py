@@ -2,10 +2,6 @@ import os
 import sys
 from pathlib import Path
 
-# Add Task 1 src folder to path so joblib can resolve the edumy_ml package when loading artifacts
-TASK1_SRC = str(Path(__file__).resolve().parent.parent.parent.parent / "ML-Udemy" / "ML-Udemy" / "task1_course_classification" / "src")
-if TASK1_SRC not in sys.path:
-    sys.path.append(TASK1_SRC)
 
 from edumy_ml.inference import Predictor
 
@@ -15,9 +11,9 @@ class CourseClassificationService:
         self.loaded = False
         
         # Paths to artifacts
-        ml_udemy_base = Path(__file__).resolve().parent.parent.parent.parent / "ML-Udemy" / "ML-Udemy"
-        self.category_dir = ml_udemy_base / "task1_course_classification" / "artifacts" / "category"
-        self.topics_dir = ml_udemy_base / "task1_course_classification" / "artifacts" / "topics"
+        artifacts_base = Path(__file__).resolve().parent.parent / "artifacts"
+        self.category_dir = artifacts_base / "category"
+        self.topics_dir = artifacts_base / "topics"
         
     def load(self):
         try:

@@ -1,0 +1,42 @@
+{
+  "dataset_slug": "longnguyen3774/coursera-courses-metadata-for-analytics-2025",
+  "taxonomy_version": "1.0",
+  "model_class": "LinearSVC",
+  "model_params": "CalibratedClassifierCV(cv=3,\n                       estimator=LinearSVC(class_weight='balanced',\n                                           max_iter=2000, random_state=42))",
+  "train_size": 3787,
+  "val_size": 812,
+  "test_size": 812,
+  "trainval_size": 4599,
+  "classes": [
+    "Arts & Humanities",
+    "Business & Management",
+    "Computer Science & Development",
+    "Data Science & AI",
+    "Engineering",
+    "Health & Wellness",
+    "Information Technology",
+    "Language Learning",
+    "Math & Logic",
+    "Personal Development",
+    "Social Sciences"
+  ],
+  "n_classes": 11,
+  "val_macro_f1": 0.7665,
+  "val_accuracy": 0.7722,
+  "test_accuracy": 0.7882,
+  "test_macro_precision": 0.7873,
+  "test_macro_recall": 0.7748,
+  "test_macro_f1": 0.7778,
+  "test_weighted_f1": 0.786,
+  "random_seed": 42,
+  "training_timestamp": "2026-08-08T23:01:24.837014",
+  "python_version": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]",
+  "sklearn_version": "1.9.0",
+  "language_scope": "English-first",
+  "selection_criterion": "validation Macro F1",
+  "known_limitations": [
+    "English-first model; Vietnamese/multilingual courses may perform poorly.",
+    "Category coverage depends on taxonomy mapping completeness.",
+    "TF-IDF features do not capture semantic similarity."
+  ]
+}

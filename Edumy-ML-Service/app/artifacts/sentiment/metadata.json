@@ -1,0 +1,14 @@
+{
+  "model_family": "SGDClassifier",
+  "dataset_slug": "septa97/100k-courseras-course-reviews-dataset",
+  "train_samples": 69456,
+  "val_samples": 14884,
+  "test_samples": 14884,
+  "split_seed": 42,
+  "sklearn_version": "1.9.0",
+  "validation_macro_f1": 0.6422680344011309,
+  "test_macro_f1": 0.6406895999542194,
+  "is_calibrated": false,
+  "language_scope": "English-first",
+  "generated_at": "2026-08-08T19:49:00.957866Z"
+}
