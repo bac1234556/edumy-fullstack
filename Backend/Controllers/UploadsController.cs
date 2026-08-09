@@ -26,8 +26,15 @@ namespace EduMy.Backend.Controllers
             var cloudinaryUrl = Environment.GetEnvironmentVariable("CLOUDINARY_URL") ?? _config["CloudinaryUrl"];
             if (!string.IsNullOrWhiteSpace(cloudinaryUrl))
             {
-                _cloudinary = new Cloudinary(cloudinaryUrl);
-                _cloudinary.Api.Secure = true;
+                try
+                {
+                    _cloudinary = new Cloudinary(cloudinaryUrl);
+                    _cloudinary.Api.Secure = true;
+                }
+                catch
+                {
+                    _cloudinary = null;
+                }
             }
         }
 
